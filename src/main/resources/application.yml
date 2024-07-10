@@ -1,0 +1,49 @@
+server:
+  port: 8787
+
+# database setting
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/jpastudy
+    username: root
+    password: mariadb
+    driver-class-name: org.mariadb.jdbc.Driver
+  #mail setting
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: 아디
+    password: 비번
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          starttls:
+            enable: true
+    default-encoding: UTF-8
+    debug: true
+
+
+  jpa:
+    # DBMS dialect setting
+    database-platform: org.hibernate.dialect.MariaDB106Dialect
+    hibernate:
+      # ddl ??? ??? ????...
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true # SQL ?? ??? ??? ??
+    database: mysql
+
+# log level setting
+logging:
+  level:
+    root: info
+    com.study.event.api: debug
+    org.hibernate.SQL: debug
+
+study:
+  mail:
+   host: 이멜
