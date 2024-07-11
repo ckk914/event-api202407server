@@ -14,7 +14,7 @@ import java.util.Map;
 @RequestMapping("/events")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin
+//@CrossOrigin
 public class EventController {
 
     private final EventService eventService;

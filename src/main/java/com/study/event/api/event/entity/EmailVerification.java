@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class EmailVerification {
 
     @Id
-    @GenericGenerator(strategy = "uuid2", name = "uuid-generator")
+    @GenericGenerator(strategy = "uuid2", name = "uuid-generator")  //uuid2 전략 사용
     @GeneratedValue(generator = "uuid-generator")
     @Column(name = "verification_id")
     private String id;

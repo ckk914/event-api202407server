@@ -1,12 +1,11 @@
 package com.study.event.api.event.controller;
 
+import com.study.event.api.event.dto.request.EventUserSaveDto;
 import com.study.event.api.event.service.EventUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController  //리액트면 무조건~!
 @RequestMapping("/auth")
@@ -20,9 +19,29 @@ public class EventUserController {
     public ResponseEntity<?> checkEmail(String email){
         boolean isDuplicate = eventUserService.checkEmailDuplicate(email);
 //중복된 이메일이 아니면 인증코드메일 전송
-        if(!isDuplicate){
-            eventUserService.sendVerificationEmail(email);
-        }
+
         return ResponseEntity.ok().body(isDuplicate);
+    }
+
+    //인증코드 검증 API
+    @GetMapping("/code")
+    public ResponseEntity<?> verifyCode(String email, String code){
+        log.info("{}'s verify code is [{}]",email,code);
+        boolean isMatch = eventUserService.isMatchCode(email,code);
+
+        return ResponseEntity.ok().body(isMatch);
+    }
+
+    //회원 가입 마무리 처리
+    @PostMapping("/join")
+    public ResponseEntity<?> join(@RequestBody EventUserSaveDto dto){
+
+        log.info("save User Info - {}", dto);
+        try {
+            eventUserService.confirmSignUp(dto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok().body("saved success");
     }
 }

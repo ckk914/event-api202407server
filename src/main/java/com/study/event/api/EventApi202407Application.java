@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class EventApi202407Application {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(EventApi202407Application.class, args);
+		System.out.println("🫡🫡🫡🫡🫡");
 	}
 
 }
