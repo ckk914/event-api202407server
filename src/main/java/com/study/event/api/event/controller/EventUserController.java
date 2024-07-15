@@ -1,7 +1,9 @@
 package com.study.event.api.event.controller;
 
 import com.study.event.api.event.dto.request.EventUserSaveDto;
+import com.study.event.api.event.dto.request.LoginRequestDto;
 import com.study.event.api.event.service.EventUserService;
+import com.study.event.api.exception.LoginFailException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -45,5 +47,20 @@ public class EventUserController {
             return ResponseEntity.badRequest().body(e.getMessage());//메시지 400번으로 쏘기!
         }
         return ResponseEntity.ok().body("saved success"); //문자 리턴보단 이런 리턴을 많이 함
+    }
+
+    @PostMapping("/sign-in")
+    public ResponseEntity<?> signIn(@RequestBody LoginRequestDto dto){
+        try {
+            eventUserService.authenticate(dto); //안에서 쓰로우하니까 try catch 해야함
+            return ResponseEntity.ok().body("login success");
+        }
+        catch (LoginFailException e){
+            //서비스에서 예외 발생 ( 로그인 실패 )
+        String errorMessage = e.getMessage();
+        return ResponseEntity.status(422).body(errorMessage);
+        }
+
+
     }
 }
