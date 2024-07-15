@@ -45,6 +45,7 @@ public class EventUser {
     @Column(nullable = false)
     private boolean emailVerified;
 
+    //반영
     public void confirm(String password) {
 
             this.password = password;

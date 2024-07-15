@@ -42,10 +42,36 @@ public class EventUserService {
         boolean exists = eventUserRepository.existsByEmail(email);
         log.info("Checking email {} is duplicate : {}", email, exists);
 
+        //중복인데 회원 가입이 마무리 되지 않은 회원은 중복이 아니라고 판단
+        if(exists && notFinish(email)){
+            //인증 메일 재발송
+
+            return false;
+        }
+
         // 일련의 데이터베이스 처리 (후속 처리) (데이터베이스 처리, 이메일 보내는 것...)
         if (!exists) processSignUp(email);
 
         return exists;
+    }
+
+    private boolean notFinish(String email) {
+        EventUser eventUser = eventUserRepository.findByEmail(email).orElseThrow();
+
+        //인증이 안되었고, 패스워드가 없는 경우
+        if(!eventUser.isEmailVerified() || eventUser.getPassword() == null ){
+       //기존 인증코드가 있는 경우 삭제
+            EmailVerification ev = emailVerificationRepository.findByEventUser(eventUser).orElse(null);
+
+            //기존꺼 있는 경우 삭제
+            if(ev != null)  emailVerificationRepository.delete(ev);
+
+
+            //인증코드 재발송
+        generateAndSendCode(email, eventUser);
+        return true;
+        }
+        return false;
     }
 
     //일련의 후속 처리 진행~!
@@ -124,6 +150,7 @@ public class EventUserService {
     }
 
     // 인증코드 체크
+    // 인증코드가 있고 , 만료 시간이 지나지 않았고, 코드번호가 일치할 경우
     public boolean isMatchCode(String email, String code) {
 
         // 이메일을 통해 회원정보를 탐색
@@ -134,18 +161,20 @@ public class EventUserService {
             // 인증코드가 있는지 탐색
             EmailVerification ev = emailVerificationRepository.findByEventUser(eventUser).orElse(null);
 
-            // 인증코드가 있고 만료시간이 지나지 않았고 코드번호가 일치할 경우
+            // 인증코드가 있고
+            //만료시간이 지나지 않았고
+            // 코드번호가 일치할 경우⭐️
             if (
                     ev != null
                             && ev.getExpiryDate().isAfter(LocalDateTime.now())
                             && code.equals(ev.getVerificationCode())
             ) {
                 // 이메일 인증여부 true로 수정
-                eventUser.setEmailVerified(true);
+                eventUser.setEmailVerified(true);   // 인증 끝난걸로 처리
                 eventUserRepository.save(eventUser); // UPDATE
 
                 // 인증코드 데이터베이스에서 삭제
-                emailVerificationRepository.delete(ev);
+                emailVerificationRepository.delete(ev);   //인증코드 제거
                 return true;
             } else {  // 인증코드가 틀렸거나 만료된 경우
                 // 인증코드 재발송
@@ -168,7 +197,7 @@ public class EventUserService {
         // 기존 회원 정보 조회
         EventUser foundUser = eventUserRepository
                 .findByEmail(dto.getEmail())
-                .orElseThrow(
+                .orElseThrow(  //throw!@
                         () -> new RuntimeException("회원 정보가 존재하지 않습니다.")
                 );
 
@@ -176,6 +205,7 @@ public class EventUserService {
         String password = dto.getPassword();
         String encodedPassword = encoder.encode(password); // 암호화
 
+        //데이터 반영
         foundUser.confirm(encodedPassword);
         eventUserRepository.save(foundUser);
     }
