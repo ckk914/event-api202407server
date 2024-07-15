@@ -1,7 +1,9 @@
 package com.study.event.api.event.service;
 
+import com.study.event.api.auth.TokenProvider;
 import com.study.event.api.event.dto.request.EventUserSaveDto;
 import com.study.event.api.event.dto.request.LoginRequestDto;
+import com.study.event.api.event.dto.response.LoginResponseDto;
 import com.study.event.api.event.entity.EmailVerification;
 import com.study.event.api.event.entity.EventUser;
 import com.study.event.api.event.repository.EmailVerificationRepository;
@@ -37,6 +39,8 @@ public class EventUserService {
     // 패스워드 암호화 객체
     private final PasswordEncoder encoder;
 
+    //토큰 생성 객체
+    private final TokenProvider tokenProvider;
 
     // 이메일 중복확인 처리
     public boolean checkEmailDuplicate(String email) {
@@ -214,7 +218,7 @@ public class EventUserService {
 
     //회원 인증 처리 (login)
     //매개변수 final은 약간 전달받은 그대로 써라 느낌! (세이프티 코딩)
-    public void authenticate(final LoginRequestDto dto){
+    public LoginResponseDto authenticate(final LoginRequestDto dto){
 
         //이메일을 통해 회원 정보 조회
         EventUser eventUser = eventUserRepository.findByEmail(dto.getEmail()).orElseThrow(
@@ -244,6 +248,20 @@ public class EventUserService {
         // ㄴ 세션 : 서버간 공유가 힘들다 , 쿠키: 브라우저만 되니, 모바일에선 안된다...
         // ㄴ 토큰
 
+
+        //로그인 성공
+        //인증 정보를 클라이언트에게 전송
+        //관리 방법 : 세션  || 쿠키 || 토큰
+        //인증 정보 (이메일, 닉네임, 프사, 토큰 정보)를 클라이언트에게 전송
+
+        //토큰 생성
+        String token = tokenProvider.createToken(eventUser);
+
+        return LoginResponseDto.builder()
+                .email(eventUser.getEmail())
+                .role(eventUser.getRole().toString())
+                .token(token)  //토큰 포함
+                .build();
 
     }
 }

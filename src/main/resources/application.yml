@@ -31,7 +31,7 @@ spring:
     database-platform: org.hibernate.dialect.MariaDB106Dialect
     hibernate:
       # ddl ??? ??? ????...
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true # SQL ?? ??? ??? ??
@@ -46,4 +46,7 @@ logging:
 
 study:
   mail:
-   host: 이멜
+   host: ckk9114@naver.com
+
+jwt:
+  secret: JRoEb9dy/XASEcEXUk9VoY1yyTlElWPFDX+XxGh6qgdTf/mGP6C2bjXnL7QOe12BRw5A7326k7ypuv+5ALlpgw==
