@@ -1,6 +1,7 @@
 package com.study.event.api.auth;
 
 import com.study.event.api.event.entity.EventUser;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -51,7 +52,7 @@ public class TokenProvider {
         claims.put("email", eventUser.getEmail());
         claims.put("role",eventUser.getRole().toString());
 
-        return Jwts.builder()
+        return Jwts.builder()    //생성용 빌더 ⭐️
                 //token에 들어갈 서명
                 .signWith(
                         Keys.hmacShaKeyFor(/*"서명에 사용할 키"*/
@@ -68,5 +69,28 @@ public class TokenProvider {
                         ))  //토큰 만료 시간
                 .setSubject(eventUser.getId()) //토큰을 식별할 수 있는 유일한 값
                 .compact();
+    }
+
+    /*
+     * 클라이언트가 전송한 토큰을 디코딩하여 토큰의 서명 위조 여부를 확인
+     * 그리고 토큰을 JSON으로 파싱하여 안에 들어있는 클레임(토큰 정보)을 리턴
+     * @param token - 클라이언트가 보낸 토큰
+     * @return - 토큰에 들어있는 인증 정보(이메일, 권한...)들을 리턴 - 회원 식별 ID
+     */
+    public String validateAndGetTokenInfo(String token) {
+        Claims claims = Jwts.parserBuilder() // 해체시 사용 빌더 ⭐️
+                //토큰 발급자의 발급 당시 서명을 넣음
+                .setSigningKey(
+                        Keys.hmacShaKeyFor(SECRET_KEY.getBytes())
+                )
+                //서명 위조 검사 진행:
+                // 위조된 경우 exception 발생
+                // 정상인 경우 클레임 리턴
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        log.info("claims: {}",claims);
+        //토큰에 인증된 회원의 pK
+        return claims.getSubject();
     }
 }
