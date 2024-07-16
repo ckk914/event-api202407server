@@ -53,7 +53,7 @@ public class EventUserController {
     @PostMapping("/sign-in")
     public ResponseEntity<?> signIn(@RequestBody LoginRequestDto dto){
         try {
-            LoginResponseDto responseDto = eventUserService.authenticate(dto); //안에서 쓰로우하니까 try catch 해야함
+            LoginResponseDto responseDto = eventUserService.authenticate(dto); //안에서 쓰로우하니까 try catch 해야함  ((회원 인증 처리))
             return ResponseEntity.ok().body(responseDto);
         }
         catch (LoginFailException e){

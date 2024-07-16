@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .csrf().disable()               //필터 설정 off
                 .httpBasic().disable()      // 베이직  인증 off(시큐리티가 제공하는거)
                 .formLogin().disable()    // 로그인 창 off
-                // 세션 인증은 더 이상 사용하지 않도록 함
+                // 세션 인증은 더 이상 사용하지 않도록 함  > 토큰 인증 시 꺼둬야함!🌟
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) //상태관리를 세션으로 안함
                 .and()      //여기까지 세션 설정
