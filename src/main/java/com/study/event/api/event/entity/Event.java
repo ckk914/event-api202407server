@@ -39,6 +39,7 @@ public class Event {
     @CreationTimestamp
     private LocalDateTime createdAt; // 이벤트 등록 날짜
 
+    @Setter
     @ManyToOne(fetch= FetchType.LAZY )
     @JoinColumn(name="ev_user_id")
     private EventUser eventUser;

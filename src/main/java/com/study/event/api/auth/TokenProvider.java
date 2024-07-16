@@ -67,7 +67,7 @@ public class TokenProvider {
                         Instant.now().plus(1, ChronoUnit.DAYS)
                         //만료 시간 1일로 설정ㄴ
                         ))  //토큰 만료 시간
-                .setSubject(eventUser.getId()) //토큰을 식별할 수 있는 유일한 값
+                .setSubject(eventUser.getId()) //토큰을 식별할 수 있는 유일한 값🌟
                 .compact();
     }
 
