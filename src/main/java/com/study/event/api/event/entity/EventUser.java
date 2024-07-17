@@ -58,4 +58,8 @@ public class EventUser {
             this.createAt = LocalDateTime.now();
 
     }
+
+    public void promoteToPremium() {
+        this.role = Role.PREMIUM;
+    }
 }

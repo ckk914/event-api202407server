@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.study.event.api.event.entity.QEvent.event;
-import static com.study.event.api.event.entity.QEventUser.eventUser;
 
 
 @Repository
@@ -38,8 +37,8 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         // 총 데이터 수 조회
         Long count = factory
                 .select(event.count())
-                .where(event.eventUser.id.eq(userId))
                 .from(event)
+                .where(event.eventUser.id.eq(userId))
                 .fetchOne();
 
         return new PageImpl<>(eventList, pageable, count);
