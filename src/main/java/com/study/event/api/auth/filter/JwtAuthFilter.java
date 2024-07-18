@@ -56,6 +56,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 // 인가처리를 위한 권한 리스트
                 List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+                //권한 정보 추가
                 authorities.add(new SimpleGrantedAuthority(tokenInfo.getRole().toString()));
 
                 AbstractAuthenticationToken auth

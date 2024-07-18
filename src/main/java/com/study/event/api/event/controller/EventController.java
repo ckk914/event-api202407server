@@ -64,6 +64,7 @@ public class EventController {
     }
 
     // 단일 조회 요청
+    //preAuthorize: 권한 설정~!@ 을 통한 등급 별 열람 제한
     @PreAuthorize("hasAuthority('PREMIUM') or hasAuthority('ADMIN')")   //or has     붙여서 이어붙일 수 있음!
     @GetMapping("/{eventId}")
     public ResponseEntity<?> getEvent(@PathVariable Long eventId) {
