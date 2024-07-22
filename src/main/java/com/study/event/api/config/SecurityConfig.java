@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests() // 요청 별로 인가 설정
 
+                //                권한 관련
                 // /events/*  -> 뒤에 딱 하나만
                 // /events/**  -> 뒤에 여러개
                 .antMatchers(HttpMethod.DELETE, "/events/*").hasAuthority("ADMIN")
@@ -55,7 +56,8 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.PUT, "/auth/promote").hasAuthority("COMMON")
 
                 // 아래의 URL요청은 로그인 없이 모두 허용
-                .antMatchers("/", "/auth/**").permitAll()
+                //파일 임시로 그냥 썼는데 원래는 토큰 있게 해서 해야한다~!🌟
+                .antMatchers("/", "/auth/**","/file/**").permitAll()
 //                .antMatchers(HttpMethod.POST,"/events/**").hasAnyRole("VIP", "ADMIN")
 
                 // 나머지 요청은 전부 인증(로그인) 후 진행해라
