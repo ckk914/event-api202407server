@@ -22,7 +22,7 @@ public class FileUploadService {
      */
     public String uploadProfileImage(MultipartFile profileImage) throws IOException {
 
-        // 파일명을 유니크하게 변경
+        // 파일명을 유니크하게 변경 [ 랜덤 아이디+ 원래 이름 ]
         String uniqueFileName = UUID.randomUUID() + "_" + profileImage.getOriginalFilename();
 
         // 파일을 S3 버킷에 저장

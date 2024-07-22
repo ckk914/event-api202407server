@@ -22,7 +22,9 @@ public class FileUploadController {
     // 파일 업로드 처리
     @PostMapping("/file/upload")
     public ResponseEntity<?> upload(
+            //여기는 json으로 받고
             @RequestPart(value = "userData", required = false) EventUserSaveDto dto,
+            //여기는 이미지로 받고
             @RequestPart(value = "profileImage") MultipartFile uploadFile
     ) {
 
