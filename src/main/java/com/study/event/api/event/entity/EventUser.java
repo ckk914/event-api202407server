@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name="tbl_event_user")
 public class EventUser {
     @Id
-    @GenericGenerator(strategy = "uuid2",name = "uuid_generator") //uuid2 전략 적용!
+    @GenericGenerator(strategy = "uuid2",name = "uuid-generator") //uuid2 전략 적용!
     @GeneratedValue(generator = "uuid-generator")
     @Column(name="ev_user_id")
     private String id;  //회원 계쩡 아니고 랜덤 pk
