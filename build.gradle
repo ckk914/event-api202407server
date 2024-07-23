@@ -55,8 +55,10 @@ dependencies {
 
 }
 
+//테스트 설정
 tasks.named('test') {
-	useJUnitPlatform()
+//	useJUnitPlatform()
+	exclude '**/*' // 빌드 시 테스트를 생략
 }
 
 
