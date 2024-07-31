@@ -1,0 +1,110 @@
+
+## 도커 컴포즈 설치
+도커 컴포즈는 여러 컨테이너로 구성된 애플리케이션을 정의하고 실행하기 위한 도구입니다. 
+
+이를 사용하면 YAML 파일(docker-compose.yml)을 통해 서비스, 네트워크, 볼륨 등을 구성하고 관리할 수 있어 
+복잡한 애플리케이션을 쉽게 배포할 수 있습니다.
+
+도커 컴포즈는 Docker Desktop에 포함되어 있으므로 별도 설치가 필요 없습니다.
+
+## 기본 명령어
+
+- `docker-compose up`: 도커 컴포즈 파일을 사용하여 애플리케이션을 시작합니다.
+- `docker-compose down`: 실행 중인 서비스를 중지하고 관련 리소스를 제거합니다.
+- `docker-compose ps`: 도커 컴포즈로 관리되는 컨테이너의 상태를 보여줍니다.
+
+
+
+```dtd
+ kon@konui-MacBookAir  ~/konFolder/src/javaProject/event.api   main ±✚  docker compose up -d
+[+] Running 9/9
+ ✔ db Pulled                                                                                                                                                                               97.8s
+   ✔ 4ce000a43472 Pull complete                                                                                                                                                            51.7s
+   ✔ 22e52f551a69 Pull complete                                                                                                                                                            51.7s
+   ✔ ca381c353a6d Pull complete                                                                                                                                                            52.0s
+   ✔ 3828f5d4474e Pull complete                                                                                                                                                            52.0s
+   ✔ cffe4cfab7a4 Pull complete                                                                                                                                                            52.0s
+   ✔ 73b3f7bc1876 Pull complete                                                                                                                                                            87.3s
+   ✔ 9397b4e36b82 Pull complete                                                                                                                                                            87.3s
+   ✔ 3ed81bb82143 Pull complete                                                                                                                                                            87.4s
+[+] Building 177.0s (12/12) FINISHED                                                                                                                                        docker:desktop-linux
+ => [app internal] load build definition from Dockerfile                                                                                                                                    0.0s
+ => => transferring dockerfile: 532B                                                                                                                                                        0.0s
+ => [app internal] load metadata for docker.io/library/amazoncorretto:11                                                                                                                    1.6s
+ => [app auth] library/amazoncorretto:pull token for registry-1.docker.io                                                                                                                   0.0s
+ => [app internal] load .dockerignore                                                                                                                                                       0.0s
+ => => transferring context: 2B                                                                                                                                                             0.0s
+ => [app 1/5] FROM docker.io/library/amazoncorretto:11@sha256:338fa93eef2e155bb8567a5c0a2cd67dfe52d575db833a926a503d728605408d                                                              0.0s
+ => [app internal] load build context                                                                                                                                                       0.5s
+ => => transferring context: 54.12MB                                                                                                                                                        0.5s
+ => CACHED [app 2/5] WORKDIR /app                                                                                                                                                           0.0s
+ => [app 3/5] COPY . /app                                                                                                                                                                   0.4s
+ => [app 4/5] RUN ./gradlew clean build                                                                                                                                                   173.6s
+ => [app 5/5] RUN cp build/libs/*.jar app.jar                                                                                                                                               0.3s
+ => [app] exporting to image                                                                                                                                                                0.6s
+ => => exporting layers                                                                                                                                                                     0.6s
+ => => writing image sha256:768ec6f4d7e23fb97c954c0465d693cf96c9b0afc0a83835f2fd9cc1c3f06d82                                                                                                0.0s
+ => => naming to docker.io/library/eventapi-app                                                                                                                                             0.0s
+ => [app] resolving provenance for metadata file                                                                                                                                            0.0s
+[+] Running 4/4
+ ✔ Network eventapi_default   Created                                                                                                                                                       0.0s
+ ✔ Volume "eventapi_db-data"  Created                                                                                                                                                       0.0s
+ ✔ Container eventapi-db-1    Started                                                                                                                                                       0.3s
+ ✔ Container eventapi-app-1   Started                                                                                                                                                       0.3s
+ kon@konui-MacBookAir  ~/konFolder/src/javaProject/event.api   main ±✚ 
+
+```
+
+### 👽 도커파일, 도커 컴포즈 파일 만들기~!
+@konui-MacBookAir  ~/konFolder/src/reactPrj/event-app202407   main  touch Dockerfile
+kon@konui-MacBookAir  ~/konFolder/src/reactPrj/event-app202407   main  touch docker-compose.yml
+
+docker compose up -d --build   : 이미지 있는데 재빌드 하고 싶을때 쓰는 것
+
+Dockerfile
+```dtd
+# 기본 이미지로 OpenJDK가 설치된 Amazon Corretto 11 사용
+#openJDK 라고 쳐도 알아서 가져올 수 있음
+FROM amazoncorretto:11
+
+# 작업 디렉토리 설정
+WORKDIR /app
+
+# 호스트의 Gradle 래퍼와 소스 코드를 이미지로 복사
+COPY . /app
+
+# 애플리케이션 빌드
+RUN ./gradlew clean build
+
+# 빌드된 JAR 파일 복사
+RUN cp build/libs/*.jar app.jar
+
+# 애플리케이션 실행 명령
+CMD ["java", "-jar", "app.jar"]
+```
+docker-compose.yml
+```dtd
+
+services:
+    backend:     # 이름은 내가 짓는거임.
+        build: .     #빌드하라는 의미
+        ports:
+            - "80:80"
+        depends_on:     #이 이미지는 아래의 db:    의존하고 있다
+            - db
+        environment:
+            SPRING_PROFILES_ACTIVE: 'docker'
+            SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/spring7
+            SPRING_DATASOURCE_USERNAME: root
+            SPRING_DATASOURCE_PASSWORD: abc1234
+
+    db:
+        image: mariadb:10        #도커 허브에서 풀 받아서 쓰는 것
+        environment:
+            MYSQL_ROOT_PASSWORD: abc1234       # 루트비번 설정
+            MYSQL_DATABASE: spring7
+        volumes:
+            - db-data:/var/lib/mysql      # 저장경로
+volumes:
+    db-data:
+```

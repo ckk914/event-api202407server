@@ -100,13 +100,12 @@ EXPOSE 8585
 CMD ["node", "app.js"]
 
 ```
-이미지 생성 도커 
-✘ kon@konui-MacBookAir  ~/konFolder/src/my-node-app  docker build -t my-node-
-app .
+이미지 생성 도커 👽
+ docker build -t my-node-app .
 
 
 docker images
-입력해보면 확인할 수 있다
+입력해보면 이미지 생성 여부를 확인할 수 있다
 
 node-container로 이름 지어서 실행   my-node-app(이미지명)
 도커 컨테이너 실행
@@ -164,3 +163,10 @@ docker build -t spring-test .
 docker run -d -p 8686:8686 --name node-container my-node-app
 
 localhost:8686 확인
+
+
+docker run -d -p 8383:9000 --name spring-container spring-api
+포트 앞부분:뒷부분
+뒷부분은 실제 톰캣 돌아가는 포트
+포트 앞부분은 접속을 위한 포트
+
