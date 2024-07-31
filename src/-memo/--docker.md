@@ -108,10 +108,12 @@ docker images
 입력해보면 이미지 생성 여부를 확인할 수 있다
 
 node-container로 이름 지어서 실행   my-node-app(이미지명)
+
+---
 도커 컨테이너 실행
 docker run -d -p 8585:8585 --name node-container my-node-app
 
-
+---
 현재 상태
 docker ps  , docker ps -a
 
@@ -124,6 +126,7 @@ docker rm 컨테이너명
 이미지 삭제
 docker rmi my-node-app
 
+---
 
 Dockerfile은 도커 이미지를 빌드하기 위한 설정 파일로
 이미지 생성 과정에서 필요한 명령어를 순차적으로 기술합니다. 
@@ -166,7 +169,10 @@ localhost:8686 확인
 
 
 docker run -d -p 8383:9000 --name spring-container spring-api
-포트 앞부분:뒷부분
-뒷부분은 실제 톰캣 돌아가는 포트
-포트 앞부분은 접속을 위한 포트
+            실행              포트                             실행 이름                이미지 이름
+포트
+8383:9000
+앞부분:뒷부분
+뒷부분  =  실제 톰캣 돌아가는 포트
+앞부분 = 접속을 위한 포트 (=도커 컨테이너 포트)
 

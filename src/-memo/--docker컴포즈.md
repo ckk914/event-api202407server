@@ -10,7 +10,9 @@
 ## 기본 명령어
 
 - `docker-compose up`: 도커 컴포즈 파일을 사용하여 애플리케이션을 시작합니다.
+
 - `docker-compose down`: 실행 중인 서비스를 중지하고 관련 리소스를 제거합니다.
+
 - `docker-compose ps`: 도커 컴포즈로 관리되는 컨테이너의 상태를 보여줍니다.
 
 
@@ -56,9 +58,12 @@
 ```
 
 ### 👽 도커파일, 도커 컴포즈 파일 만들기~!
-@konui-MacBookAir  ~/konFolder/src/reactPrj/event-app202407   main  touch Dockerfile
-kon@konui-MacBookAir  ~/konFolder/src/reactPrj/event-app202407   main  touch docker-compose.yml
+touch Dockerfile
+touch docker-compose.yml
 
+docker build -t spring-image .    //빌드 
+
+docker compose up -d                : 이미지 없고 컨테이너 실행 없는 상태에서 (-d : 백그라운드 실행)
 docker compose up -d --build   : 이미지 있는데 재빌드 하고 싶을때 쓰는 것
 
 Dockerfile
@@ -92,7 +97,7 @@ services:
             - "80:80"
         depends_on:     #이 이미지는 아래의 db:    의존하고 있다
             - db
-        environment:
+        environment:      
             SPRING_PROFILES_ACTIVE: 'docker'
             SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/spring7
             SPRING_DATASOURCE_USERNAME: root
@@ -108,3 +113,7 @@ services:
 volumes:
     db-data:
 ```
+
+application.properties 나 yml은
+접두어만 같게 복제해서 사용 가능
+application-dev.properties
