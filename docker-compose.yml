@@ -1,0 +1,23 @@
+
+services:
+    backend:     # 이름은 내가 짓는거임.
+        build: .     #빌드하라는 의미
+        ports:
+            - "80:80"
+        depends_on:     #이 이미지는 아래의 db:    의존하고 있다
+            - db
+        environment:
+            SPRING_PROFILES_ACTIVE: 'docker'
+            SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/spring7
+            SPRING_DATASOURCE_USERNAME: root
+            SPRING_DATASOURCE_PASSWORD: abc1234
+
+    db:
+        image: mariadb:10        #도커 허브에서 풀 받아서 쓰는 것
+        environment:
+            MYSQL_ROOT_PASSWORD: abc1234       # 루트비번 설정
+            MYSQL_DATABASE: spring7
+        volumes:
+            - db-data:/var/lib/mysql      # 저장경로
+volumes:
+    db-data:
