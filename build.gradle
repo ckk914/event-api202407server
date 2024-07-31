@@ -16,6 +16,11 @@ group = 'com.study'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+jar {
+	// 불필요한 plain jar 생성 설정 비활성화
+	enabled = false
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
