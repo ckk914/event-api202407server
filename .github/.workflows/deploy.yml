@@ -1,0 +1,64 @@
+name: Deploy Spring Application to AWS EC2
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Grant execute permission for gradlew
+              run: chmod +x gradlew
+
+            - name: Make directory for deliver
+              run: mkdir deploy
+
+            - name: Write the application.yml
+              run: |   # 키를 통해 yml을 만든다~!
+                  echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+
+            ## springboot 도커 이미지 빌드 후 도커허브에 push하기
+            - name: web springboot docker build and push
+              run: |
+                  docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+                  docker build --no-cache -t ${{ secrets.DOCKERHUB_USERNAME }}/event-api:latest .
+                  docker push ${{ secrets.DOCKERHUB_USERNAME }}/event-api:latest
+
+            # 도커 허브에서 jar파일 및 pull
+            - name: Deploy to Dev
+              uses: appleboy/ssh-action@master
+              with:
+                  username: ec2-user
+                  host: ${{ secrets.EC2_HOST }}
+                  key: ${{ secrets.EC2_SSH_KEY }}
+                  script: |
+                      echo "Docker login..."
+                      docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+                      
+                      echo "Write the docker-compose.yml"
+                      echo "${{ secrets.DOCKER_COMPOSE_YML }}" > ./docker-compose.yml
+                      
+                      echo "Stopping existing container..."
+                      docker-compose down || true
+                      
+                      echo "Remove Existing Docker image..."
+                      docker rmi soongu/event-api:latest || true
+                      
+                      echo "Pulling Docker image..."
+                      docker pull soongu/event-api:latest
+                      
+                      echo "Starting new container..."
+                      docker-compose up -d 
+
+
+#            echo "Stopping existing container..."
+#            docker stop event-api-container || true
+#            docker rm event-api-container || true
+#            echo "Starting new container..."
+#            docker run -d -p 80:80 --name event-api-container soongu/event-api:latest
