@@ -48,10 +48,10 @@ jobs:
                       docker-compose down || true
                       
                       echo "Remove Existing Docker image..."
-                      docker rmi soongu/event-api:latest || true
+                      docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/event-api:latest || true
                       
                       echo "Pulling Docker image..."
-                      docker pull soongu/event-api:latest
+                      docker pull ${{ secrets.DOCKERHUB_USERNAME }}/event-api:latest
                       
                       echo "Starting new container..."
                       docker-compose up -d 
